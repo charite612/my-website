@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vœux Spéciaux pour 2026</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Parisienne&family=Lato:wght@300&display=swap');
+
+        :root {
+            --bg-color: #020024;
+            --text-color: #e0e0e0;
+            --gold-color: #ffd700;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Lato', sans-serif;
+            text-align: center;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Parisienne', cursive;
+            font-size: 4rem;
+            color: var(--gold-color);
+            margin: 0 0 15px 0;
+            text-shadow: 0 0 8px var(--gold-color), 0 0 20px #ff8c00;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin: 0 auto 25px auto;
+        }
+        
+        .signature {
+            font-family: 'Parisienne', cursive;
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-top: 20px;
+        }
+
+        #play-music {
+            background: var(--gold-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="fireworks"></div>
+    <div class="container">
+        <h1>Bonne Année 2026 !</h1>
+        <p>
+            À toi que j'apprécie tant,<br>
+            En cette fin d'année, mes pensées se tournent vers toi pour te souhaiter le meilleur. Que 2026 t'apporte une cascade de bonheur, une santé de fer et la réalisation de tes rêves les plus chers.
+        </p>
+        <div class="signature">Avec toute mon affection,</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fireworks-js@latest/dist/fireworks.js"></script>
+    <script>
+        const fireworksContainer = document.querySelector('.fireworks');
+        const fireworks = new Fireworks(fireworksContainer, {
+            maxRockets: 5,
+            rocketSpawnInterval: 150,
+            numParticles: 100,
+            explosionMinHeight: 0.2,
+            explosionMaxHeight: 0.9,
+            explosionChance: 0.08
+        });
+        fireworks.start();
+
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playMelody() {
+            if(audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            const melody = [261.63, 329.63, 392.00, 523.25, 440.00, 523.25, 659.25, 880.00, 349.23, 440.00, 523.25, 698.46, 392.00, 493.88, 587.33, 783.99];
+            let noteIndex = 0;
+            const tempo = 150;
+            const playMelodyNote = () => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(melody[noteIndex % melody.length], audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.12, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + (tempo / 1000) * 0.9);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + tempo / 1000);
+                noteIndex++;
+            };
+            const bassline = [130.81, 220.00, 174.61, 196.00];
+            let bassIndex = 0;
+            const playBassNote = () => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(bassline[bassIndex % bassline.length] / 2, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + (tempo * 4 / 1000) * 0.9);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + (tempo * 4 / 1000));
+                bassIndex++;
+            };
+            setInterval(playMelodyNote, tempo);
+            setInterval(playBassNote, tempo * 4);
+        }
+
+        document.body.addEventListener('click', playMelody, { once: true });
+    </script>
+</body>
+</html>
